@@ -1,3 +1,5 @@
+package top.daoyang.array;
+
 public class Array<E> {
 
     private E[] data;
