@@ -26,7 +26,7 @@ public class Array<E> {
 
     public void addLast(E e) {
         if (size == data.length)
-            throw new IllegalArgumentException("AddLast failed. Array is full.");
+            resize(data.length *2);
 
         data[size] = e;
         size ++;
@@ -34,7 +34,7 @@ public class Array<E> {
 
     public void add(int index, E e) {
         if (size == data.length)
-            throw new IllegalArgumentException("Add failed. Array is full.");
+            resize(data.length *2);
 
         if (index < 0 || index > size)
             throw new IllegalArgumentException("Add failed. Array required index < 0 || index > size");
@@ -45,6 +45,17 @@ public class Array<E> {
 
         data[index] = e;
         size ++;
+    }
+
+    private void resize(int i) {
+        E[] newArray = (E[]) new Object[i];
+
+        for (int j = 0; j < size; j++) {
+            newArray[j] = data[j];
+        }
+
+        data = newArray;
+        System.out.println("Resize: " + i);
     }
 
     public E get(int index) {
@@ -89,6 +100,10 @@ public class Array<E> {
         }
         size --;
 
+        // size  = 5 length = 10
+        if (size < (data.length / 2))
+            resize((data.length / 2));
+
         return abandon;
     }
 
@@ -113,30 +128,40 @@ public class Array<E> {
     public String toString() {
         System.out.println("Array: size=" + size + " capacity=" + getCapacity());
 
-        StringBuilder start = new StringBuilder("[");
+        StringBuilder start = new StringBuilder("[ ");
         for (int i = 0; i < size; i ++) {
             start.append(data[i]);
 
             if (i != size -1)
                 start.append(", ");
         }
-        start.append("]");
+        start.append(" ]");
 
         return start.toString();
     }
 
     public static void main(String[] args) {
-        Array array = new Array();
+        Array array = new Array(5);
 
         array.addLast(0);
+        array.addLast(1);
         array.addLast(2);
-        array.add(1, 1);
-
-        System.out.println(array.contains(100));
-        System.out.println(array.search(1));
-        System.out.println(array.remove(1));
-        System.out.println(array.removeElement(200));
+        array.addLast(3);
+        array.addLast(4);
+        array.addLast(5);
 
         System.out.println(array);
+
+        Array resizeArray = new Array(10);
+
+        resizeArray.addLast(1);
+        resizeArray.addLast(2);
+        resizeArray.addLast(3);
+        resizeArray.addLast(4);
+        resizeArray.addLast(5);
+
+        resizeArray.removeLast();
+
+        System.out.println(resizeArray);
     }
 }
