@@ -34,7 +34,7 @@ public class Array {
 
     public void add(int index, int e) {
         if (size == data.length)
-            throw new IllegalArgumentException("AddLast failed. Array is full.");
+            throw new IllegalArgumentException("Add failed. Array is full.");
 
         if (index < 0 || index > size)
             throw new IllegalArgumentException("Add failed. Array required index < 0 || index > size");
@@ -49,16 +49,64 @@ public class Array {
 
     public int get(int index) {
         if (index < 0 || index >= size)
-            throw new IllegalArgumentException("Add failed. Array required index < 0 || index > size");
+            throw new IllegalArgumentException("Get failed. Array required index < 0 || index > size");
 
         return data[index];
     }
 
     public void set(int index, int e) {
         if (index < 0 || index >= size)
-            throw new IllegalArgumentException("Add failed. Array required index < 0 || index > size");
+            throw new IllegalArgumentException("Set failed. Array required index < 0 || index > size");
 
         data[index] = e;
+    }
+
+    public boolean contains(int e) {
+        for (int d : data) {
+            if (e == d)
+                return true;
+        }
+        return false;
+    }
+
+    public int search(int e) {
+        for (int i = 0; i < size; i++) {
+            if (data[i] == e)
+                return i;
+        }
+
+        return -1;
+    }
+
+    public int remove(int index) {
+        if (index < 0 || index >= size)
+            throw new IllegalArgumentException("Delete failed. Array required index < 0 || index > size");
+
+        int abandon = data[index];
+
+        for (int i = size -1; i > index; i--) {
+            data[i - 1] = data[i];
+        }
+        size --;
+
+        return abandon;
+    }
+
+    public int removeFirst() {
+        return remove(0);
+    }
+
+    public int removeLast() {
+        return remove(size -1);
+    }
+
+    public int removeElement(int e) {
+        int findElement = search(e);
+
+        if (findElement == -1) {
+            return -1;
+        }
+        return remove(findElement);
     }
 
     @Override
@@ -83,6 +131,11 @@ public class Array {
         array.addLast(0);
         array.addLast(2);
         array.add(1, 1);
+
+        System.out.println(array.contains(100));
+        System.out.println(array.search(1));
+        System.out.println(array.remove(1));
+        System.out.println(array.removeElement(200));
 
         System.out.println(array);
     }
