@@ -97,8 +97,8 @@ public class Array<E> {
 
         E abandon = data[index];
 
-        for (int i = size -1; i > index; i--) {
-            data[i - 1] = data[i];
+        for (int i = index; i < size; i++) {
+            data[i] = data[i + 1];
         }
         size --;
 
