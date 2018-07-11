@@ -1,12 +1,16 @@
 package top.daoyang.linkedList;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class LinkedList<E> {
 
     private Node dummyHead;
 
     private int size;
 
-    private class Node {
+    private class Node<E> {
         private E data;
 
         private Node next;
@@ -24,10 +28,55 @@ public class LinkedList<E> {
             this(null, null);
         }
 
+        public Node generate(List<Integer> lists) {
+
+            if (lists == null || lists.size() == 0)
+                throw new IllegalArgumentException("lists == null || lists.size() == 0");
+
+            Node head = null, loopNode = null;
+
+            for (Integer item : lists) {
+
+                if (head == null) {
+                    Node<Integer> node = new Node<>(item);
+                    head = node;
+                    loopNode = head;
+                } else {
+                    Node<Integer> node = new Node<>(item);
+                    loopNode.next = node;
+                    loopNode = node;
+                }
+            }
+
+            return head;
+        }
+
         @Override
         public String toString() {
             return data.toString();
         }
+    }
+
+    private Node deleteAllTheSame(Node head, E val) {
+        while (head != null && head.data == val) {
+            Node delNode = head;
+            head = head.next;
+            delNode.next = null;
+        }
+
+        Node pre = head;
+
+        while (pre != null) {
+            if (pre.next != null && pre.next.data == val) {
+                Node delNode = pre.next;
+                pre.next = delNode.next;
+                delNode.next = null;
+            } else {
+                pre = pre.next;
+            }
+        }
+
+        return head;
     }
 
     public LinkedList() {
@@ -48,16 +97,16 @@ public class LinkedList<E> {
     }
 
     public void add(int index, E e) {
-        if (index < 0 ||  index > size)
+        if (index < 0 || index > size)
             throw new IllegalArgumentException("Require index < 0 ||  index > size");
 
-            Node loopNode = dummyHead;
+        Node loopNode = dummyHead;
 
-            for (int i = 0; i < index; i++)
-                loopNode = loopNode.next;
+        for (int i = 0; i < index; i++)
+            loopNode = loopNode.next;
 
-            loopNode.next = new Node(e, loopNode.next);
-            size ++;
+        loopNode.next = new Node(e, loopNode.next);
+        size++;
     }
 
     public void addLast(E e) {
@@ -65,7 +114,7 @@ public class LinkedList<E> {
     }
 
     public E get(int index) {
-        if (index < 0 ||  index >= size)
+        if (index < 0 || index >= size)
             throw new IllegalArgumentException("Get fail require index < 0 ||  index >= size");
 
         Node loopNode = dummyHead.next;
@@ -73,7 +122,7 @@ public class LinkedList<E> {
         for (int i = 0; i < index; i++)
             loopNode = loopNode.next;
 
-        return loopNode.data;
+        return (E) loopNode.data;
     }
 
     public E getFirst() {
@@ -85,7 +134,7 @@ public class LinkedList<E> {
     }
 
     public void set(int index, E e) {
-        if (index < 0 ||  index >= size)
+        if (index < 0 || index >= size)
             throw new IllegalArgumentException("Set fail require index < 0 ||  index >= size");
 
         Node loopNode = dummyHead.next;
@@ -106,6 +155,33 @@ public class LinkedList<E> {
 
         }
         return false;
+    }
+
+    public E remove(int index) {
+        if (index < 0 || index >= size)
+            throw new IllegalArgumentException("Remove fail require index < 0 ||  index >= size");
+
+        Node prevNode = dummyHead;
+
+        for (int i = 0; i < index; i++)
+            prevNode = prevNode.next;
+
+        Node delNode = prevNode.next;
+        prevNode.next = prevNode.next.next;
+
+        delNode.next = null;
+
+        size--;
+
+        return (E) delNode.data;
+    }
+
+    public E removeFirst() {
+        return remove(0);
+    }
+
+    public E removeLast() {
+        return remove(size - 1);
     }
 
     @Override
@@ -138,6 +214,10 @@ public class LinkedList<E> {
 
         linkedList.set(4, 4);
 
-        System.out.println(linkedList);
+        linkedList.removeFirst();
+        linkedList.removeLast();
+        linkedList.remove(1);
+
+
     }
 }
