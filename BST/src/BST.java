@@ -69,15 +69,33 @@ public class BST<E extends Comparable<E>> {
         }
     }
 
+    public void add2(E e) {
+        root = add2(root, e);
+    }
+
+    public TreeNode add2(TreeNode root, E e) {
+        if (root == null) {
+            size ++;
+
+            return new TreeNode(e);
+        }
+
+        if (e.compareTo(root.data) < 0) {
+            root.left = add2(root.left, e);
+        }
+
+        if (e.compareTo(root.data) > 0) {
+            root.right = add2(root.right, e);
+        }
+
+        return root;
+    }
+
     public static void main(String[] args) {
         BST<Integer> bst = new BST<>();
-        bst.add(11);
-        bst.add(10);
-        bst.add(9);
-        bst.add(12);
-        bst.add(14);
-        bst.add(11);
-
-        System.out.println(bst.root.left);
-    }
+        bst.add2(11);
+        bst.add2(10);
+        bst.add2(12);
+        bst.add2(9);
+     }
 }
