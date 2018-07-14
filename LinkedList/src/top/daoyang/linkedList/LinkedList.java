@@ -148,7 +148,7 @@ public class LinkedList<E> {
     public boolean contains(E e) {
         Node loopNode = dummyHead.next;
 
-        for (int i = 0; i < size - 1; i++) {
+        for (int i = 0; i < size; i++) {
             if (loopNode.data.equals(e))
                 return true;
             loopNode = loopNode.next;
@@ -182,6 +182,22 @@ public class LinkedList<E> {
 
     public E removeLast() {
         return remove(size - 1);
+    }
+
+    public E removeByElem(E e) {
+        return remove(getIndex(dummyHead.next, e, -1));
+    }
+
+    private int getIndex(Node root, E e, int index) {
+        if (root != null) {
+            index ++;
+            if (root.data.equals(e))
+                return index;
+
+            return getIndex(root.next, e, index);
+        } else {
+            return -1;
+        }
     }
 
     @Override
@@ -218,6 +234,9 @@ public class LinkedList<E> {
         linkedList.removeLast();
         linkedList.remove(1);
 
+        System.out.println(linkedList);
+        System.out.println(linkedList.removeByElem(1));
 
+        System.out.println(linkedList);
     }
 }

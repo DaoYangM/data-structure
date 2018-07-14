@@ -18,12 +18,12 @@ public class LinkedQueue<E> implements Queue<E> {
     public void enqueue(E e) {
         Node node = new Node(e);
 
-        if (tail == null) {
+        if (tail == null && head == null) {
             tail = node;
             head = tail;
         } else {
-            tail.next = node;
-            tail = node;
+            head.next = node;
+            head = node;
         }
 
         size++;
@@ -35,11 +35,14 @@ public class LinkedQueue<E> implements Queue<E> {
         if (head == null)
             throw new IllegalArgumentException("Queue is empty");
 
-        Node abandonNode = head;
+        Node abandonNode = tail;
 
-        head = head.next;
+        tail = tail.next;
 
         abandonNode.next = null;
+
+        if (size == 1)
+            head = null;
 
         size--;
 
@@ -89,7 +92,7 @@ public class LinkedQueue<E> implements Queue<E> {
     public String toString() {
 
         StringBuilder stringBuilder = new StringBuilder("LinkedQueue: head: ");
-        for (Node cur = head ;cur != null; cur = cur.next) {
+        for (Node cur = tail ;cur != null; cur = cur.next) {
             stringBuilder.append(cur.data);
             stringBuilder.append(" -> ");
         }

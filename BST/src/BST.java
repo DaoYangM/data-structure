@@ -1,3 +1,6 @@
+import top.daoyang.queue.LinkedQueue;
+import top.daoyang.stack.LinkedStack;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -128,6 +131,12 @@ public class BST<E extends Comparable<E>> {
         return root;
     }
 
+    private TreeNode findRightMin(TreeNode root) {
+        if (root.left != null)
+            return findRightMin(root.left);
+        return root;
+    }
+
     public static BST buildTree(List<Integer> list) {
         BST<Integer> bst = new BST<>();
 
@@ -153,8 +162,8 @@ public class BST<E extends Comparable<E>> {
         size --;
     }
 
-    public TreeNode remove (TreeNode root, E e) {
-        if (e.compareTo(root.left.data) == 0) {
+    private TreeNode remove (TreeNode root, E e) {
+        if (root.left != null && e.compareTo(root.left.data) == 0) {
             if (root.left.left == null && root.left.right == null)
                 root.left = null;
             else if (root.left.left != null && root.left.right == null) {
@@ -202,17 +211,81 @@ public class BST<E extends Comparable<E>> {
         return root;
     }
 
-    private TreeNode findRightMin(TreeNode root) {
-        if (root.left != null)
-            return findRightMin(root.left);
-        return root;
+    public void preOrderNR() {
+        LinkedStack<TreeNode> linkedStack = new LinkedStack<>();
+
+        linkedStack.push(root);
+        while (!linkedStack.isEmpty()) {
+
+            TreeNode pNode13 = linkedStack.pop();
+            if (pNode13 != null) {
+                System.out.print(pNode13.data + "\t");
+
+                linkedStack.push(pNode13.right);
+                linkedStack.push(pNode13.left);
+            }
+        }
+    }
+
+    public void preOrder() {
+        preOrder(root);
+    }
+
+    private void preOrder(TreeNode root) {
+        if (root == null)
+            return;
+        System.out.print(root.data + "\t");
+        preOrder(root.left);
+        preOrder(root.right);
+    }
+
+    public void inOrder() {
+        inOrder(root);
+    }
+
+    private void inOrder(TreeNode root) {
+        if (root == null)
+            return;
+        inOrder(root.left);
+        System.out.println(root.data);
+        inOrder(root.right);
+    }
+
+    public void postOrder() {
+        postOrder(root);
+    }
+
+    private void postOrder(TreeNode root) {
+        if (root == null)
+            return;
+        postOrder(root.left);
+        postOrder(root.right);
+        System.out.println(root.data);
+    }
+
+    public void levelOrder() {
+        if (root == null)
+            throw new IllegalArgumentException("BST is empty");
+
+        LinkedQueue<TreeNode> linkedQueue = new LinkedQueue<>();
+        linkedQueue.enqueue(root);
+
+        while (!linkedQueue.isEmpty()) {
+            TreeNode deNode =  linkedQueue.dequeue();
+
+            if (deNode != null) {
+                System.out.println(deNode.data + "\t");
+
+                linkedQueue.enqueue(deNode.left);
+                linkedQueue.enqueue(deNode.right);
+            }
+        }
     }
 
     public static void main(String[] args) {
-        BST<Integer> bst = BST.buildTree(Arrays.asList(11, 5, 2, 1, 4, 3, 5, 8, 7, 9, 22, 19, 15, 12 ,16, 17, 23, 20));
-//        BST<Integer> bst = BST.buildTree(Arrays.asList(11, 10, 13, 12, 24, 15, 25));
+        BST bst = BST.buildTree(Arrays.asList(10, 20));
 
-        bst.remove(2);
-//        System.out.println(bst.findRightMax(bst.root.left.left));
+        bst.preOrder();
+
      }
 }
