@@ -54,6 +54,11 @@ public class BSTMap<K extends Comparable<K>, V> implements Map<K, V> {
         node.vale = v;
     }
 
+    @Override
+    public V remove(K k) {
+        return null;
+    }
+
     public TreeNode getNode(TreeNode node, K k) {
         if (node == null)
             return null;

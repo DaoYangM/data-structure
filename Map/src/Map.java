@@ -5,5 +5,7 @@ public interface Map<K extends Comparable<K>, V> {
 
     V  get(K k);
 
-    void set(K k, V v);
+    void set(K k, V v) throws IllegalAccessException;
+
+    V remove(K k);
 }

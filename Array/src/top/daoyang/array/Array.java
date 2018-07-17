@@ -39,7 +39,7 @@ public class Array<E> {
             resize(data.length *2);
 
         if (index < 0 || index > size)
-            throw new IllegalArgumentException("Add failed. Array required index < 0 || index > size");
+            throw new IllegalArgumentException("Add failed. top.daoyang.array.Array required index < 0 || index > size");
 
         for (int i = size; i > index; i --) {
             data[size] = data[size -1];
@@ -62,14 +62,14 @@ public class Array<E> {
 
     public E get(int index) {
         if (index < 0 || index >= size)
-            throw new IllegalArgumentException("Get failed. Array required index < 0 || index > size");
+            throw new IllegalArgumentException("Get failed. top.daoyang.array.Array required index < 0 || index > size");
 
         return data[index];
     }
 
     public void set(int index, E e) {
         if (index < 0 || index >= size)
-            throw new IllegalArgumentException("Set failed. Array required index < 0 || index > size");
+            throw new IllegalArgumentException("Set failed. top.daoyang.array.Array required index < 0 || index > size");
 
         data[index] = e;
     }
@@ -93,7 +93,7 @@ public class Array<E> {
 
     public E remove(int index) {
         if (index < 0 || index >= size)
-            throw new IllegalArgumentException("Delete failed. Array required index < 0 || index > size");
+            throw new IllegalArgumentException("Delete failed. top.daoyang.array.Array required index < 0 || index > size");
 
         E abandon = data[index];
 
@@ -126,9 +126,18 @@ public class Array<E> {
         return remove(findElement);
     }
 
+    public void swap(int i, int j) {
+        if (i < 0 || j < 0 || i > size || j > size)
+            throw new IllegalArgumentException("i or j out of range");
+
+        E t = data[i];
+        data[i] = data[j];
+        data[j] = t;
+    }
+
     @Override
     public String toString() {
-        System.out.println("Array: size=" + size + " capacity=" + getCapacity());
+        System.out.println("top.daoyang.array.Array: size=" + size + " capacity=" + getCapacity());
 
         StringBuilder start = new StringBuilder("[ ");
         for (int i = 0; i < size; i ++) {

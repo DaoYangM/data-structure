@@ -2,8 +2,6 @@ package top.daoyang.stack;
 
 import top.daoyang.array.Array;
 
-import java.util.Arrays;
-
 public class ArrayStack<E> implements Stack<E> {
 
     private Array<E> data;

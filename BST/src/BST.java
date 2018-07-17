@@ -282,10 +282,152 @@ public class BST<E extends Comparable<E>> {
         }
     }
 
+    public E minimum() {
+        if (size ==0)
+            throw new IllegalArgumentException("BST is empty");
+        return minimum(root).data;
+    }
+
+    private TreeNode minimum(TreeNode node) {
+
+        if (node == null)
+            return null;
+
+        if (node.left == null)
+            return node;
+
+        return minimum(node.left);
+    }
+
+    public TreeNode removeMin() {
+        TreeNode delNode = minimum(root);
+        if (size ==0)
+            throw new IllegalArgumentException("BST is empty");
+
+        root = removeMin(root);
+        size --;
+
+        return delNode;
+    }
+
+    private TreeNode removeMin(TreeNode node) {
+        if (node == null)
+            return null;
+
+        if (node.left == null) {
+
+            TreeNode rightNode = node.right;
+            node.right = null;
+
+            return rightNode;
+        }
+
+        node.left = removeMin(node.left);
+
+        return node;
+    }
+
+    public E maximum() {
+        if (size ==0)
+            throw new IllegalArgumentException("BST is empty");
+        return maximum(root).data;    }
+
+    private TreeNode maximum(TreeNode node) {
+
+        if (node == null)
+            return null;
+
+        if (node.right == null)
+            return node;
+
+        return maximum(node.right);
+    }
+
+    public TreeNode removeMax() {
+        TreeNode delNode = maximum(root);
+
+        root = removeMax(root);
+        size --;
+        return delNode;
+    }
+
+    private TreeNode removeMax(TreeNode node) {
+        if (node == null)
+            return null;
+
+        if (node.right == null) {
+
+            TreeNode leftNode = node.left;
+            node.left = null;
+
+            return leftNode;
+        }
+
+        node.right = removeMin(node.left);
+
+        return node;
+    }
+
+    public void hRemove(E e) {
+        size --;
+        root = hRemove(root, e);
+    }
+
+    private TreeNode hRemove(TreeNode node, E e) {
+        if (node == null)
+            return null;
+
+        if (e.compareTo(node.data) < 0)
+            node.left = hRemove(node.left, e);
+
+        else if (e.compareTo(node.data) > 0) {
+            node.right = hRemove(node.right, e);
+        }
+
+        else {
+            if (node.left == null) {
+                TreeNode rightNode = node.right;
+
+                node.right = null;
+
+                return rightNode;
+
+            }
+
+            if (node.right == null) {
+                TreeNode leftNode = node.left;
+
+                node.left = null;
+
+                return leftNode;
+            }
+
+            TreeNode successor = minimum(node.right);
+            successor.right = removeMin(node.right);
+            successor.left = node.left;
+
+            node.left = node.right = null;
+
+            return successor;
+        }
+
+        return node;
+    }
+
     public static void main(String[] args) {
-        BST bst = BST.buildTree(Arrays.asList(10, 20));
+        BST bst = BST.buildTree(Arrays.asList(11, 6, 4, 8));
 
         bst.preOrder();
+        bst.hRemove(4);
+        System.out.println("hRemove " + 4);
+        bst.preOrder();
 
+        int a = 10;
+
+        if (a == 10)
+            System.out.println("a=0");
+        else if (a / 2 == 5 ) {
+            System.out.println("a/2=5");
+        }
      }
 }

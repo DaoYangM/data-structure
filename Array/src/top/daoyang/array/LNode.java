@@ -1,6 +1,5 @@
 package top.daoyang.array;
 
-import javax.xml.soap.Node;
 import java.util.Arrays;
 import java.util.List;
 
@@ -74,7 +73,7 @@ public class LNode<E> {
     }
 
     public static void main(String[] args) {
-//        LNode head = LNode.generate(Arrays.asList(1, 1, 2, 3, 1));
+//        top.daoyang.array.LNode head = top.daoyang.array.LNode.generate(Arrays.asList(1, 1, 2, 3, 1));
 
         LNode<Integer> head = new LNode(Arrays.asList(1, 1, 2, 3, 1));
 
