@@ -23,6 +23,12 @@ public class MaxHeap<E extends Comparable<E>> {
         return data.isEmpty();
     }
 
+    public E getFront() {
+        if (getSize() == 0)
+            throw new IllegalArgumentException("Heap is null");
+        return data.get(0);
+    }
+
     public int parent(int index) {
         if (index == 0)
             throw new IllegalArgumentException("index 0 doesn't have parent");
@@ -54,7 +60,7 @@ public class MaxHeap<E extends Comparable<E>> {
     }
 
     public E extractMax() {
-        E max = data.get(0);
+        E max = getFront();
 
         data.set(0, data.get(getSize() - 1));
         data.removeLast();
@@ -70,10 +76,6 @@ public class MaxHeap<E extends Comparable<E>> {
             if (rightChild(ki) < getSize() && data.get(rightChild(ki)).compareTo(data.get(leftChild(ki))) > 0) {
                 data.swap(ki, rightChild(ki));
                 ki = rightChild(ki);
-            }
-
-            else if (rightChild(ki) >= getSize()){
-                break;
             }
 
             else {
