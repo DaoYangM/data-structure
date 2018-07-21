@@ -40,6 +40,7 @@ public class Trie {
         for (int i = 0; i < word.length(); i++) {
             char w = word.charAt(i);
 
+
             if (!cur.next.containsKey(w))
                 cur.next.put(w, new Node());
 
