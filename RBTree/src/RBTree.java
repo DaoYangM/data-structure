@@ -4,7 +4,7 @@ import top.daoyang.stack.LinkedStack;
 import java.util.Arrays;
 import java.util.List;
 
-public class AVL<E extends Comparable<E>> {
+public class RBTree<E extends Comparable<E>> {
 
     private TreeNode root;
 
@@ -12,7 +12,7 @@ public class AVL<E extends Comparable<E>> {
 
     private boolean isDeleteRoot = false;
 
-    public AVL() {
+    public RBTree() {
         this.root = null;
         this.size = 0;
     }
@@ -32,13 +32,13 @@ public class AVL<E extends Comparable<E>> {
 
         private TreeNode right;
 
-        private int height;
+        private Color color;
 
         public TreeNode(E data) {
             this.data = data;
             this.left = null;
             this.right = null;
-            this.height = 1;
+            this.color = Color.RED;
         }
 
         @Override
@@ -47,136 +47,76 @@ public class AVL<E extends Comparable<E>> {
         }
     }
 
-    public void add(E e) {
-        if (root == null) {
-            root = new TreeNode(e);
-            size++;
-        } else
-            add(root, e);
+    private enum Color {
+        RED,
+        BLACK;
     }
 
-    private int getHeight(TreeNode node) {
+    private boolean isRed(TreeNode node) {
         if (node == null)
-            return 0;
-        return node.height;
+            return false;
+        return node.color == Color.RED;
     }
 
-    private int getBalanceFactor(TreeNode root) {
-        if (root == null)
-            return 0;
-        return getHeight(root.left) - getHeight(root.right);
+    private TreeNode leftRotate(TreeNode node) {
+        TreeNode x = node.right;
+        node.right = x.left;
+        x.left = node;
+
+        x.color = node.color;
+        node.color = Color.RED;
+
+        return x;
     }
 
-    private void add(TreeNode root, E e) {
+    private TreeNode rightRotate(TreeNode node) {
+        TreeNode x = node.left;
+        node.left = x.right;
+        x.right = node;
 
-        if (root.left == null && (e.compareTo(root.data) < 0)) {
-            root.left = new TreeNode(e);
-            size++;
+        x.color = node.color;
+        node.color = Color.RED;
 
-            return;
-        }
-
-        if (root.right == null && (e.compareTo(root.data) > 0)) {
-            root.right = new TreeNode(e);
-            size++;
-
-            return;
-        }
-
-        if (e.compareTo(root.data) < 0) {
-            add(root.left, e);
-        }
-
-        if (e.compareTo(root.data) > 0) {
-            add(root.right, e);
-        }
+        return x;
     }
 
-    public void add2(E e) {
-        root = add2(root, e);
+    private void flipColors(TreeNode node) {
+        node.color = Color.RED;
+        node.left.color = Color.BLACK;
+        node.right.color = Color.BLACK;
     }
 
-    public TreeNode add2(TreeNode node, E e) {
+    public void add(E e) {
+        root = add(root, e);
+        root.color = Color.BLACK;
+    }
+
+    public TreeNode add(TreeNode node, E e) {
         if (node == null) {
-            size++;
+            size ++;
 
             return new TreeNode(e);
         }
 
         if (e.compareTo(node.data) < 0) {
-            node.left = add2(node.left, e);
+            node.left = add(node.left, e);
         }
 
-        if (e.compareTo(node.data) > 0) {
-            node.right = add2(node.right, e);
+        else if (e.compareTo(node.data) > 0) {
+            node.right = add(node.right, e);
         }
 
-        node.height = Math.max(getHeight(node.left), getHeight(node.right)) + 1;
+        if (isRed(node.right) && !isRed(node.left))
+            node = leftRotate(node);
 
-        int balanceFactor = getBalanceFactor(node);
+        if (isRed(node.left) && isRed(node.left.left))
+            node = rightRotate(node);
 
-        if (balanceFactor > 1 && getBalanceFactor(node.left) >= 0)
-            return rightRotate(node);
-
-        if (balanceFactor < -1 && getBalanceFactor(node.right) <= 0)
-            return leftRotate(node);
-
-        // LR
-        if (balanceFactor > 1 && getBalanceFactor(node.left) < 0) {
-            node.left = leftRotate(node.left);
-            return rightRotate(node);
+        if (isRed(node.left) && isRed(node.left)) {
+            flipColors(node);
         }
 
-        // RL
-        if (balanceFactor < -1 && getBalanceFactor(node.right) > 0) {
-            node.right = rightRotate(node.right);
-            return leftRotate(node);
-        }
-
-        System.out.println("balance " + getBalanceFactor(node));
         return node;
-    }
-
-    // 对节点y进行向右旋转操作，返回旋转后新的根节点x
-    //        y                              x
-    //       / \                           /   \
-    //      x   T4     向右旋转 (y)        z     y
-    //     / \       - - - - - - - ->    / \   / \
-    //    z   T3                       T1  T2 T3 T4
-    //   / \
-    // T1   T2
-    private TreeNode rightRotate(TreeNode y) {
-        TreeNode x = y.left; // z
-        TreeNode T3 = x.right; //T3
-
-        x.right = y;
-        y.left = T3;
-
-        y.height = Math.max(getHeight(y.left), getHeight(y.right)) + 1;
-        x.height = Math.max(getHeight(x.left), getHeight(x.right)) + 1;
-
-        return x;
-    }
-
-    // 对节点y进行向左旋转操作，返回旋转后新的根节点x
-    //    y                             x
-    //  /  \                          /   \
-    // T1   x      向左旋转 (y)       y     z
-    //     / \   - - - - - - - ->   / \   / \
-    //   T2  z                     T1 T2 T3 T4
-    //      / \
-    //     T3 T4
-    private TreeNode leftRotate(TreeNode y) {
-        TreeNode x = y.right; //z
-        TreeNode T2 = x.left; // null
-
-        x.left = y;
-        y.right = T2;
-
-        y.height = Math.max(getHeight(y.left), getHeight(y.right)) + 1;
-        x.height = Math.max(getHeight(x.left), getHeight(x.right)) + 1;
-
-        return x;
     }
 
     public boolean contains(E e) {
@@ -211,14 +151,14 @@ public class AVL<E extends Comparable<E>> {
         return root;
     }
 
-    public static AVL buildTree(List<Integer> list) {
-        AVL<Integer> AVL = new AVL<>();
+    public static RBTree buildTree(List<Integer> list) {
+        RBTree<Integer> rbTree = new RBTree<>();
 
-        for (Integer item : list) {
-            AVL.add2(item);
+        for (Integer item: list) {
+            rbTree.add(item);
         }
 
-        return AVL;
+        return rbTree;
     }
 
     public void remove(E e) {
@@ -233,18 +173,20 @@ public class AVL<E extends Comparable<E>> {
             remove(root, e);
         }
 
-        size--;
+        size --;
     }
 
-    private TreeNode remove(TreeNode root, E e) {
+    private TreeNode remove (TreeNode root, E e) {
         if (root.left != null && e.compareTo(root.left.data) == 0) {
             if (root.left.left == null && root.left.right == null)
                 root.left = null;
             else if (root.left.left != null && root.left.right == null) {
                 root.left = root.left.left;
-            } else if (root.left.left == null && root.left.right != null) {
+            }
+            else if (root.left.left == null && root.left.right != null) {
                 root.left = root.left.right;
-            } else if (root.left.left != null && root.left.right != null) {
+            }
+            else if (root.left.left != null && root.left.right != null) {
                 TreeNode delNode = root.left;
                 TreeNode rMax = findRightMax(delNode.left);
                 rMax.right = delNode.right;
@@ -257,20 +199,25 @@ public class AVL<E extends Comparable<E>> {
                     root.left = delNode.left;
                 }
             }
-        } else if (e.compareTo(root.right.data) == 0) {
+        }
+
+        else if (e.compareTo(root.right.data) == 0) {
             if (root.right.left == null && root.right.right == null)
                 root.right = null;
             else if (root.right.left != null && root.right.right == null) {
                 root.right = root.right.left;
-            } else if (root.right.left == null && root.right.right != null) {
+            }
+            else if (root.right.left == null && root.right.right != null) {
                 root.right = root.right.right;
-            } else if (root.right.left != null && root.right.right != null) {
+            }
+            else if (root.right.left != null && root.right.right != null) {
                 TreeNode delNode = root.right;
                 TreeNode rMax = findRightMin(delNode.right);
                 rMax.left = delNode.left;
                 root.right = delNode.right;
             }
-        } else if (e.compareTo(root.left.data) < 0 || (e.compareTo(root.data) < 0))
+        }
+        else if (e.compareTo(root.left.data) < 0  || (e.compareTo(root.data) < 0))
             remove(root.left, e);
         else if ((e.compareTo(root.right.data) > 0) || (e.compareTo(root.data) > 0))
             remove(root.right, e);
@@ -332,13 +279,13 @@ public class AVL<E extends Comparable<E>> {
 
     public void levelOrder() {
         if (root == null)
-            throw new IllegalArgumentException("AVL is empty");
+            throw new IllegalArgumentException("RBTree is empty");
 
         LinkedQueue<TreeNode> linkedQueue = new LinkedQueue<>();
         linkedQueue.enqueue(root);
 
         while (!linkedQueue.isEmpty()) {
-            TreeNode deNode = linkedQueue.dequeue();
+            TreeNode deNode =  linkedQueue.dequeue();
 
             if (deNode != null) {
                 System.out.println(deNode.data + "\t");
@@ -350,8 +297,8 @@ public class AVL<E extends Comparable<E>> {
     }
 
     public E minimum() {
-        if (size == 0)
-            throw new IllegalArgumentException("AVL is empty");
+        if (size ==0)
+            throw new IllegalArgumentException("RBTree is empty");
         return minimum(root).data;
     }
 
@@ -368,11 +315,11 @@ public class AVL<E extends Comparable<E>> {
 
     public TreeNode removeMin() {
         TreeNode delNode = minimum(root);
-        if (size == 0)
-            throw new IllegalArgumentException("AVL is empty");
+        if (size ==0)
+            throw new IllegalArgumentException("RBTree is empty");
 
         root = removeMin(root);
-        size--;
+        size --;
 
         return delNode;
     }
@@ -395,10 +342,9 @@ public class AVL<E extends Comparable<E>> {
     }
 
     public E maximum() {
-        if (size == 0)
-            throw new IllegalArgumentException("AVL is empty");
-        return maximum(root).data;
-    }
+        if (size ==0)
+            throw new IllegalArgumentException("RBTree is empty");
+        return maximum(root).data;    }
 
     private TreeNode maximum(TreeNode node) {
 
@@ -415,7 +361,7 @@ public class AVL<E extends Comparable<E>> {
         TreeNode delNode = maximum(root);
 
         root = removeMax(root);
-        size--;
+        size --;
         return delNode;
     }
 
@@ -437,7 +383,7 @@ public class AVL<E extends Comparable<E>> {
     }
 
     public void hRemove(E e) {
-        size--;
+        size --;
         root = hRemove(root, e);
     }
 
@@ -445,69 +391,50 @@ public class AVL<E extends Comparable<E>> {
         if (node == null)
             return null;
 
-        TreeNode retNode;
-        if (e.compareTo(node.data) < 0) {
+        if (e.compareTo(node.data) < 0)
             node.left = hRemove(node.left, e);
-            retNode = node;
-        }
 
         else if (e.compareTo(node.data) > 0) {
             node.right = hRemove(node.right, e);
-            retNode = node;
-        } else {
+        }
+
+        else {
             if (node.left == null) {
                 TreeNode rightNode = node.right;
+
                 node.right = null;
 
-                retNode = rightNode;
+                return rightNode;
+
             }
 
-            else if (node.right == null) {
+            if (node.right == null) {
                 TreeNode leftNode = node.left;
+
                 node.left = null;
 
-                retNode = leftNode;
-            } else {
-                TreeNode successor = minimum(node.right);
-                successor.right = remove(node.right, successor.data);
-                successor.left = node.left;
-                node.left = node.right = null;
-
-                retNode = successor;
+                return leftNode;
             }
+
+            TreeNode successor = minimum(node.right);
+            successor.right = removeMin(node.right);
+            successor.left = node.left;
+
+            node.left = node.right = null;
+
+            return successor;
         }
 
-        if (retNode == null)
-            return null;
-
-        retNode.height = Math.max(getHeight(retNode.left), getHeight(retNode.right)) + 1;
-
-        int balanceFactor = getBalanceFactor(retNode);
-
-        if (balanceFactor > 1 && getBalanceFactor(retNode.left) >= 0)
-            return rightRotate(retNode);
-
-        if (balanceFactor < -1 && getBalanceFactor(retNode.right) <= 0)
-            return leftRotate(retNode);
-
-        // LR
-        if (balanceFactor > 1 && getBalanceFactor(retNode.left) < 0) {
-            retNode.left = leftRotate(retNode.left);
-            return rightRotate(retNode);
-        }
-
-        // RL
-        if (balanceFactor < -1 && getBalanceFactor(retNode.right) > 0) {
-            retNode.right = rightRotate(retNode.right);
-            return leftRotate(retNode);
-        }
-
-        return retNode;
+        return node;
     }
 
     public static void main(String[] args) {
-        AVL avl = AVL.buildTree(Arrays.asList(20, 10, 30, 5));
+        RBTree rbTree = RBTree.buildTree(Arrays.asList(11, 6, 4, 8));
 
-        avl.hRemove(30);
+        rbTree.preOrder();
+        rbTree.hRemove(4);
+        System.out.println("hRemove " + 4);
+        rbTree.preOrder();
+
     }
 }
